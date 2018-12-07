@@ -19,6 +19,7 @@ struct IBRes {
     struct ibv_device_attr	 dev_attr;
 
     char   *ib_buf;
+    size_t  device_index;
     size_t  ib_buf_size;
     size_t  ib_reg_buf_size;
 };

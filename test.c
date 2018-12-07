@@ -10,12 +10,20 @@ int setup_ib ()
     struct ibv_device **dev_list = NULL;    
     memset (&ib_res, 0, sizeof(struct IBRes));
 
+    //ret = ibv_fork_init();
+    //check(ret == 0, "Failed to ibv_fork_init.")
+
     /* get IB device list */
-    dev_list = ibv_get_device_list(NULL);
+    int num = 0;
+    dev_list = ibv_get_device_list(&num);
     check(dev_list != NULL, "Failed to get ib device list.");
+    int i;
+    for(i = 0;i < num;i++){
+        printf("%d\t%s\n", i, ibv_get_device_name(dev_list[i]));
+    }
 
     /* create IB context */
-    ib_res.ctx = ibv_open_device(*dev_list);
+    ib_res.ctx = ibv_open_device(dev_list[ib_res.device_index]);
     check(ib_res.ctx != NULL, "Failed to open ib device.");
 
     /* allocate protection domain */
@@ -100,11 +108,14 @@ void fin_ib ()
 }
 
 int main(int argc, const char *argv[]){
-    if(argc != 3){
+    if(argc != 4){
         return 0;
     }
-    ib_res.ib_buf_size = atoi(argv[1]);
-    ib_res.ib_reg_buf_size = atoi(argv[2]);
+    ib_res.device_index = atoi(argv[1]);
+    ib_res.ib_buf_size = atoi(argv[2]);
+    ib_res.ib_reg_buf_size = atoi(argv[3]);
+
+    printf("%lu %lu\n", ib_res.ib_buf_size, ib_res.ib_reg_buf_size);
     
     setup_ib();
     fin_ib();
