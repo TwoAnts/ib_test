@@ -8,7 +8,6 @@ int setup_ib ()
 {
     int	ret		         = 0;
     struct ibv_device **dev_list = NULL;    
-    memset (&ib_res, 0, sizeof(struct IBRes));
 
     //ret = ibv_fork_init();
     //check(ret == 0, "Failed to ibv_fork_init.")
@@ -44,6 +43,8 @@ int setup_ib ()
 			    IBV_ACCESS_REMOTE_READ |
 			    IBV_ACCESS_REMOTE_WRITE);
     check (ib_res.mr != NULL, "Failed to register mr");
+
+    return 0;
     
     /* query IB device attr */
     ret = ibv_query_device(ib_res.ctx, &ib_res.dev_attr);
@@ -111,6 +112,8 @@ int main(int argc, const char *argv[]){
     if(argc != 4){
         return 0;
     }
+
+    memset (&ib_res, 0, sizeof(struct IBRes));
     ib_res.device_index = atoi(argv[1]);
     ib_res.ib_buf_size = atoi(argv[2]);
     ib_res.ib_reg_buf_size = atoi(argv[3]);
